@@ -1,63 +1,32 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController extends Controller<User> {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id = 0;
-
-    private int generateId() {
-        while (users.containsKey(id)) {
-            id++;
-        }
-        return id;
-    }
-
-    void logRequest(User user, HttpServletRequest request) {
-        log.info("Получен запрос к эндпоинту: '{} {}', переданный объект: '{}', Тело запроса: '{}'",
-                request.getMethod(), request.getRequestURI(), request.getQueryString(), user);
-    }
-
-    @GetMapping
-    public Map<Integer, User> findAll() {
-        return users;
-    }
-
-    @PostMapping
-    public User create(@RequestBody User user, HttpServletRequest request) throws ValidationException {
-        logRequest(user, request);
+    @Override
+    boolean validate(User user) throws ValidationException {
+        boolean isValidUser;
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.error("Неправильный е-мэйл: " + user.getEmail());
             throw new ValidationException("Неправильный е-мэйл");
-
-        } else if (user.getLogin() == null || user.getLogin().contains("_")) {
+        } else if (user.getLogin() == null || user.getLogin().contains(" ")) {
             log.error("Неправильный логин: " + user.getLogin());
             throw new ValidationException("Неправильный логин");
-        } else if (user.getBirthday().isAfter(LocalDate.now().plusDays(1))) {
+        } else if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Неправильная дата рождения: " + user.getBirthday());
             throw new ValidationException("Неправильная дата рождения");
-        } else if (user.getName() == null) {
-            user.setName(user.getLogin());
-        } else users.put(generateId(), user);
-        log.info("Пользователь " + '\"' + user.getName() + '\"' + " зарегистрирован.");
-        return users.get(user.getId());
-    }
-
-    @PutMapping
-    public void update(@RequestBody User user, HttpServletRequest request) {
-        logRequest(user, request);
-        users.put(user.getId(), user);
+        } else isValidUser = true;
+        return isValidUser;
     }
 }

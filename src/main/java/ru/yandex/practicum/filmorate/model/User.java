@@ -1,14 +1,34 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
-@Data
-public class User {
-    int id;
+@Getter
+@Setter
+@ToString
+public class User extends Entity{
+
+    @Email
     String email;
+
+
+    @Pattern(regexp = "\\S*$")
     String login;
-    String name;
+
     LocalDate birthday;
+
+    public User(String name, String email, String login, LocalDate birthday) {
+        super(name);
+        this.email = email;
+
+        this.login = login;
+        this.birthday = birthday;
+    }
 }
