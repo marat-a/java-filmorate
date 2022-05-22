@@ -61,7 +61,7 @@ abstract public class Controller<T extends Entity> {
             if (validate(object)){
                 map.put(object.getId(), object);
                 log.info(object.getClass().getSimpleName()+ " " + '\"' + object.getName() + '\"' + " обновлен.");
-                return new ResponseEntity<T>(HttpStatus.OK);
+                return new ResponseEntity (object, HttpStatus.OK);
             } else return new ResponseEntity(HttpStatus.BAD_REQUEST);
         } catch (ValidationException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
