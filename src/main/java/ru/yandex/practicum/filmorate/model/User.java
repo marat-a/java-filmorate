@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @ToString
 public class User extends Entity{
 
+    String name;
+
     @Email
     String email;
 
@@ -22,13 +24,14 @@ public class User extends Entity{
     @Pattern(regexp = "\\S*$")
     String login;
 
-    LocalDate birthday;
-
     public User(String name, String email, String login, LocalDate birthday) {
-        super(name);
+        this.name = name;
         this.email = email;
-
         this.login = login;
         this.birthday = birthday;
     }
+
+    LocalDate birthday;
+
+
 }

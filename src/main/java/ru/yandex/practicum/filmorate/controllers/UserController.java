@@ -27,6 +27,10 @@ public class UserController extends Controller<User> {
             log.error("Неправильная дата рождения: " + user.getBirthday());
             throw new ValidationException("Неправильная дата рождения");
         } else isValidUser = true;
+
+        if (user.getName()==null||user.getName().equals("")) {
+            user.setName(user.getLogin());
+        }
         return isValidUser;
     }
 }

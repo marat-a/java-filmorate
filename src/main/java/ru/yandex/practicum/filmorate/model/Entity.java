@@ -9,9 +9,5 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public abstract class Entity {
     int id;
-    @NotBlank
     String name;
-    public Entity(String name){
-        this.name = name;
-    }
 }
