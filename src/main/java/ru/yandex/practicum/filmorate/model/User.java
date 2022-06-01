@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class User extends Entity{
-
+public class User extends Entity {
+    Long id;
     String name;
 
     @Email

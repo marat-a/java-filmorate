@@ -12,7 +12,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class Film extends Entity{
+public class Film extends Entity {
+
+    Long id;
 
     @NotBlank
     String name;
