@@ -2,35 +2,71 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController extends Controller<User> {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+public class UserController {
+    private final UserService userService;
 
-    @Override
-    boolean validate(User user) throws ValidationException {
-        boolean isValidUser;
-        if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            log.error("Неправильный е-мэйл: " + user.getEmail());
-            throw new ValidationException("Неправильный е-мэйл");
-        } else if (user.getLogin() == null || user.getLogin().contains(" ")) {
-            log.error("Неправильный логин: " + user.getLogin());
-            throw new ValidationException("Неправильный логин");
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Неправильная дата рождения: " + user.getBirthday());
-            throw new ValidationException("Неправильная дата рождения");
-        } else isValidUser = true;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-        if (user.getName()==null||user.getName().equals("")) {
-            user.setName(user.getLogin());
-        }
-        return isValidUser;
+    @PostMapping
+    public User create(@Valid @RequestBody User user) throws RuntimeException {
+        return userService.getUserStorage().create(user);
+    }
+
+    @PutMapping
+    public User update(@Valid @RequestBody User user) throws RuntimeException {
+        return userService.getUserStorage().update(user);
+    }
+
+    @DeleteMapping
+    public void remove(@Valid @RequestBody User user) throws RuntimeException {
+        userService.getUserStorage().remove(user);
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable long id) throws RuntimeException {
+        return userService.getUserStorage().getUserById(id);
+    }
+
+    @GetMapping
+    public List<User> getAllUsers() throws RuntimeException {
+        return userService.getUserStorage().getAllUsers();
+    }
+
+
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) throws RuntimeException {
+        userService.addFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getAllFriends (@PathVariable Long id) throws RuntimeException {
+        return userService.getAllFriends(id);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) throws RuntimeException {
+        userService.removeFriend(id, friendId);
+    }
+
+
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> allCoincideFriends (@PathVariable Long id, @PathVariable Long otherId) throws RuntimeException {
+        return userService.allCoincideFriends(id, otherId);
     }
 }
