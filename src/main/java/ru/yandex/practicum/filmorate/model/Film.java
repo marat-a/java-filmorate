@@ -8,11 +8,13 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @ToString
-public class Film extends Entity {
+public class Film  {
 
     Long id;
 
@@ -26,6 +28,8 @@ public class Film extends Entity {
 
     @Min(1)
     int duration;
+
+    Set<Long> likes = new HashSet<>();
 
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {
